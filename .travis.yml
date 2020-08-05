@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- 8
+- 10
+- 11
+- 12
+jobs:
+  include:
+  - if: type = pull_request
+    node_js: 12
+    stage: expect_version_bump
+    script: yarn check-for-version-bump
+  - node_js: 12
+    if: branch = master

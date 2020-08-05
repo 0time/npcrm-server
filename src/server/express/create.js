@@ -1,4 +1,5 @@
 const express = require('express');
+const middlewares = require('../../middlewares');
 const routes = require('../../routes');
 
 module.exports = () => {
@@ -8,6 +9,7 @@ module.exports = () => {
   return {
     start: context => {
       const app = express();
+      const router = express.Router();
 
       let resolved = false;
 
@@ -19,9 +21,33 @@ module.exports = () => {
           }
         }, context.config.startTimeoutMs);
 
+        middlewares(context).forEach(mw => app.use(mw));
+
         routes(context).forEach(({ impl, method, route }) =>
-          app[method](route, impl),
+          router[method](route, impl),
         );
+
+        router.use(require('../../middlewares/logger')(context));
+
+        const errorMiddleware = (err, req, res, next) => {
+          context.logger.error(
+            new Date().toISOString(),
+            req.ip,
+            req.method,
+            req.path,
+            err,
+          );
+
+          return next(err);
+        };
+
+        router.use(errorMiddleware);
+
+        app.use(context.config.server.basePath, router);
+
+        app.use(require('../../middlewares/logger')(context));
+
+        app.use(errorMiddleware);
 
         server = app.listen(context.config.server.port, () => {
           resolved = true;

@@ -21,7 +21,8 @@
     "http-status-codes": "^1.4.0"
   },
   "devDependencies": {
-    "@0ti.me/test-deps": "^0.1.14"
+    "@0ti.me/test-deps": "^0.1.14",
+    "nodemon": "^2.0.4"
   },
   "repository": "git@gitlab.com:0ti.me/npcrm-server",
   "private": false

@@ -4,8 +4,9 @@ const parseResponse = require('./parse-response');
 
 // The function should promise an object with a response (response for text or jsonRespone for json)
 // and an optional status code (200 OK is assumed if absent)
-module.exports = (context, fnWillPromise) => (req, res, next) =>
-  fnWillPromise(req, res)
+module.exports = (context, fnMayPromise) => (req, res, next) =>
+  Promise.resolve()
+    .then(() => fnMayPromise(req, res))
     .then(result =>
       res.status(get(result, 'status', OK)).send(parseResponse(result)),
     )

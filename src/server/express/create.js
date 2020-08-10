@@ -13,6 +13,8 @@ module.exports = () => {
 
       let resolved = false;
 
+      // Promise to resolve if the server starts
+      // and reject if it fails to start
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           if (!resolved) {

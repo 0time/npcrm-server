@@ -25,10 +25,10 @@
     sinon-chai "^3.5.0"
     uuid "^3.3.3"
 
-"@0ti.me/tiny-pfp@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@0ti.me/tiny-pfp/-/tiny-pfp-0.1.6.tgz#5c808e6fc55555fdf168233ce4c18bd6e06835ed"
-  integrity sha512-vyOeMXsv4yhNxHdla9f3OLa3cRVcAp98Ve1YVZd7oJL+y+w3gx/xIfdPvbpV0ZtL/8dRFdzSB3LRXkydW6PjXg==
+"@0ti.me/tiny-pfp@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@0ti.me/tiny-pfp/-/tiny-pfp-0.1.10.tgz#f53797570b8245549afc6c414a546acf9f71e68e"
+  integrity sha512-rgzOK31EhzKuvlJag7Xd+vDGpx+gyI0EqWHLWj89NhEPxMvwHigTlOrAT+oFao3A5iC7WRI0H4tGtDcqdK24pQ==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4":
   version "7.10.4"

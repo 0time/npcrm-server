@@ -6,6 +6,10 @@
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint .",
+    "generate-routes": "yarn generate-index --directory=./src/routes --outputFilePath=./src/routes/index.js --overwrite=true",
+    "generate-indices": "yarn generate-routes",
+    "prepare": "yarn generate-indices",
+    "pretest": "yarn generate-indices",
     "run-coveralls": "NODE_ENV=unit nyc report --reporter=text-lcov | coveralls",
     "start": "node src/index.js",
     "test": "yarn lint && yarn test:unit && yarn test:coveralls && yarn test:integration",
@@ -22,6 +26,7 @@
     "lodash.merge": "^4.6.2"
   },
   "devDependencies": {
+    "@0ti.me/index-generator": "^0.1.9",
     "@0ti.me/test-deps": "^0.1.14",
     "nodemon": "^2.0.4",
     "proxyquire": "^2.1.3"

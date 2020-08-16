@@ -1,4 +1,5 @@
 const express = require('express');
+const { get } = require('@0ti.me/tiny-pfp');
 const middlewares = require('../../middlewares');
 const routes = require('../../routes');
 
@@ -7,7 +8,7 @@ module.exports = () => {
   let server = null;
 
   return {
-    start: context => {
+    start: (context) => {
       const app = express();
       const router = express.Router();
 
@@ -23,11 +24,18 @@ module.exports = () => {
           }
         }, context.config.startTimeoutMs);
 
-        middlewares(context).forEach(mw => app.use(mw));
+        middlewares(context).forEach((mw) => app.use(mw));
 
-        routes(context).forEach(({ impl, method, route }) =>
-          router[method](route, impl),
-        );
+        // TODO: This needs work, probably. Nested keys would not work at all, I think.
+        // Probably need to generalize this and put it into a library for re-use anyway.
+        Object.values(routes)
+          .map((ea) => ea(context))
+          .forEach((routeConfig) =>
+            router[get(routeConfig, 'method', 'get')](
+              get(routeConfig, 'route'),
+              get(routeConfig, 'impl'),
+            ),
+          );
 
         router.use(require('../../middlewares/logger')(context));
 
@@ -61,17 +69,17 @@ module.exports = () => {
           resolve(context);
         });
 
-        server.on('connection', connection => {
+        server.on('connection', (connection) => {
           connections.push(connection);
           connection.on(
             'close',
             () =>
-              (connections = connections.filter(curr => curr !== connection)),
+              (connections = connections.filter((curr) => curr !== connection)),
           );
         });
       });
     },
-    stop: context => {
+    stop: (context) => {
       return new Promise((resolve, reject) => {
         let server = null;
 
@@ -84,12 +92,14 @@ module.exports = () => {
             resolve(context);
           });
 
-          server.on('connection', connection => {
+          server.on('connection', (connection) => {
             connections.push(connection);
             connection.on(
               'close',
               () =>
-                (connections = connections.filter(curr => curr !== connection)),
+                (connections = connections.filter(
+                  (curr) => curr !== connection,
+                )),
             );
           });
         }

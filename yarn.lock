@@ -2,6 +2,21 @@
 # yarn lockfile v1
 
 
+"@0ti.me/en-path@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@0ti.me/en-path/-/en-path-0.1.0.tgz#410504d6b47a07573ffe94ac8a2666c8d5fd053c"
+  integrity sha512-lde72ajBq/CN3eXiztuP4vsFgMzfLk8HRhnqdzbTiY5yjQiisaC2CC0a/vfdSms2ZsAxiz94GeAijktI4t+KPw==
+
+"@0ti.me/index-generator@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@0ti.me/index-generator/-/index-generator-0.1.9.tgz#ebb04c8dfd76303b37935d1eb390ba1f4b638503"
+  integrity sha512-blM62Frzc1MqGOCasx8Tc0n3LPetSCxmO1PKZGvnt5L1IUQPPU1pFcDy2NYSM/gju+WaAI8cw4A733ks61koeQ==
+  dependencies:
+    "@0ti.me/en-path" "^0.1.0"
+    "@0ti.me/tiny-pfp" "^0.1.10"
+    minimist "^1.2.5"
+    prettier "^2.0.5"
+
 "@0ti.me/test-deps@^0.1.14":
   version "0.1.14"
   resolved "https://registry.yarnpkg.com/@0ti.me/test-deps/-/test-deps-0.1.14.tgz#a416795e2a353ea7d3eff204d5e78562d747d404"
@@ -2931,6 +2946,11 @@ prettier@^1.18.2:
   version "1.19.1"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.19.1.tgz#f7d7f5ff8a9cd872a7be4ca142095956a60797cb"
   integrity sha512-s7PoyDv/II1ObgQunCbB9PdLmUcBZcnWOcxDh7O0N/UwDEsHyqkW+Qh28jW+mVuCdx7gLB0BotYI1Y6uI9iyew==
+
+prettier@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.0.5.tgz#d6d56282455243f2f92cc1716692c08aa31522d4"
+  integrity sha512-7PtVymN48hGcO4fGjybyBSIWDsLU4H4XlvOHfq91pz9kkGlonzwTfYkaIEwiRg/dAJF9YlbsduBAgtYLi+8cFg==
 
 progress@^2.0.0:
   version "2.0.3"

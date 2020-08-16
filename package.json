@@ -1,6 +1,6 @@
 {
   "name": "npcrm-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The server implementation of the npcrm project",
   "license": "GPL-3.0",
   "main": "src/index.js",

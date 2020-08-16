@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@0ti.me/index-generator": "^0.1.9",
-    "@0ti.me/test-deps": "^0.1.14",
+    "@0ti.me/test-deps": "^0.1.17",
     "nodemon": "^2.0.4",
     "proxyquire": "^2.1.3"
   },

@@ -16,13 +16,13 @@ module.exports = () => {
 
       // Promise to resolve if the server starts
       // and reject if it fails to start
-      return new Promise((resolve, reject) => {
+      return new context.Promise((resolve, reject) => {
         setTimeout(() => {
           if (!resolved) {
             resolved = true;
             reject(new Error('Express server start timeout limit exceeded'));
           }
-        }, context.config.startTimeoutMs);
+        }, context.config.server.startTimeoutMs);
 
         middlewares(context).forEach((mw) => app.use(mw));
 
@@ -80,9 +80,7 @@ module.exports = () => {
       });
     },
     stop: (context) => {
-      return new Promise((resolve, reject) => {
-        let server = null;
-
+      return new context.Promise((resolve, reject) => {
         let resolved = false;
 
         if (server) {
@@ -110,9 +108,13 @@ module.exports = () => {
 
             context.process.exit(-1);
 
-            reject(new Error('Express server stop timeout limit exceeded'));
+            reject(
+              new Error(
+                `Express server stop timeout limit exceeded (${context.config.server.stopTimeoutMs})`,
+              ),
+            );
           }
-        }, context.config.stopTimeoutMs);
+        }, context.config.server.stopTimeoutMs);
       });
     },
   };

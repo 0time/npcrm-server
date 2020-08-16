@@ -1,48 +1,20 @@
+const nycConfig = require('@0ti.me/test-deps/configuration-templates/nyc.config');
 const { NODE_ENV } = process.env;
 
-const tryquire = require('@0ti.me/test-deps').tryquire;
+let requiredPercent = 25;
 
-const myNycrc = tryquire('./.my.nycrc.js');
-
-const watermarks = {
-  default: {
-    branches: [90, 95],
-    functions: [90, 95],
-    lines: [90, 95],
-    statements: [90, 95],
-  },
-  integration: {
-    branches: [50, 70],
-    functions: [50, 70],
-    lines: [50, 70],
-    statements: [50, 70],
-  },
-};
-
-const coverageLevels = {
-  default: {
-    branches: 90,
-    functions: 90,
-    lines: 90,
-    statements: 90,
-  },
-  integration: {
-    branches: 50,
-    functions: 50,
-    lines: 50,
-    statements: 50,
-  },
-};
+if (NODE_ENV === 'unit') {
+  requiredPercent = 0;
+}
 
 module.exports = Object.assign(
-  {
-    all: true,
-    'check-coverage': true,
-    forceColor: true,
-    include: ['src'],
-    reporter: ['lcov', 'text', 'text-summary'],
-    watermarks: watermarks[NODE_ENV] || watermarks.default,
-  },
-  coverageLevels[NODE_ENV] || coverageLevels.default,
-  myNycrc,
+  {},
+  nycConfig,
+  nycConfig.setAllCategoriesTo(requiredPercent),
 );
+
+// This just prints everything if you execute this directly like so:
+//   node nyc.config.js
+if (require.main === module) {
+  console.error(module.exports); // eslint-disable-line no-console
+}

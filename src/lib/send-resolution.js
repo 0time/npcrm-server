@@ -9,7 +9,7 @@ module.exports = (context, fnMayPromise, singleArgumentCall = true) => (
   res,
   next,
 ) =>
-  Promise.resolve()
+  context.Promise.resolve()
     .then(() =>
       singleArgumentCall === true
         ? fnMayPromise({ context, next, req, res })

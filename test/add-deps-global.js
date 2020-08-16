@@ -1,1 +1,1 @@
-global.deps = require('@0ti.me/test-deps');
+../node_modules/@0ti.me/test-deps/configuration-templates/add-deps-global.js

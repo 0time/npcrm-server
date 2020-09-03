@@ -31,7 +31,11 @@ module.exports = (context, config) => (model) => {
         const where = get(options, WHERE, false);
 
         if (assumeIdFieldMeansUpdate !== true) {
-          throw new Error('not implemented');
+          // What should we do if this is the case? Are we going to allow inserting a new record with a hardcoded ID?
+          // That seems weird.
+          throw new Error(
+            `assume id field means update is not implemented tableName=${tableName}`,
+          );
         }
 
         let pgFormatBuilder = [];
@@ -74,7 +78,34 @@ module.exports = (context, config) => (model) => {
             throw new Error('TODO: Implement default where implementation');
           }
         } else {
-          throw new Error('implement updating an existing record');
+          queryStringBuilder.push('UPDATE %I SET');
+          pgFormatBuilder.push(tableName);
+
+          let fixLast = false;
+
+          for (let i = 0; i < fields.length; ++i) {
+            if (fields[i] !== idField) {
+              queryStringBuilder.push(
+                `%I = $${queryStringParameters.length + 1},`,
+              );
+              pgFormatBuilder.push(fields[i]);
+              queryStringParameters.push(entity[fields[i]]);
+
+              fixLast = true;
+            }
+          }
+
+          if (fixLast === true) {
+            const i = queryStringBuilder.length - 1;
+            queryStringBuilder[i] = queryStringBuilder[i].slice(0, -1);
+          }
+
+          // TODO: find every instance of shoving numbers into strings like this and use pgFormat instead.
+          queryStringBuilder.push(
+            `WHERE %I = $${queryStringParameters.length + 1}`,
+          );
+          pgFormatBuilder.push(idField);
+          queryStringParameters.push(entity[idField]);
         }
 
         const formattedQuery = pgFormat(

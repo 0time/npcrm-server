@@ -15,15 +15,16 @@ module.exports = (context, fnMayPromise, singleArgumentCall = true) => (
         ? fnMayPromise({ context, next, req, res })
         : fnMayPromise(req, res, next, context),
     )
-    .then((result) =>
-      res.status(get(result, 'status', OK)).send(parseResponse(result)),
-    )
+    .then((result) => {
+      const response = parseResponse(result);
+
+      context.logger.trace({ response, result });
+
+      return res.status(get(result, 'status', OK)).send(response);
+    })
     .then(() => next())
     .catch((error) => {
-      context.logger.error({
-        message: `This was an unhandled route implementation error detected in ${__filename}`,
-        error,
-      });
+      context.logger.error(error);
 
       res
         .status(INTERNAL_SERVER_ERROR)

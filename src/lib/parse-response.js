@@ -1,6 +1,6 @@
 const keys = ['jsonResponse', 'response', 'responseText'];
 
-module.exports = result => {
+module.exports = (result) => {
   let response = null;
   let key = null;
 
@@ -21,5 +21,5 @@ module.exports = result => {
     }
   }
 
-  throw new Error('a valid response was not found');
+  throw new Error(`a valid response was not found ${JSON.stringify(result)}`);
 };

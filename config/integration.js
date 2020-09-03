@@ -3,7 +3,8 @@ module.exports = {
   cors: {
     origin: '*',
   },
-  server: {
+  enableDbVersioning: false,
+  webServer: {
     basePath: '/api',
     port: 53241,
     startTimeoutMs: 50,

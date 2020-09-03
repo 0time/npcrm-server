@@ -1,4 +1,5 @@
 /.nyc_output/
+/config/local.js
 /coverage/
 /node_modules/
 /src/routes/index.js

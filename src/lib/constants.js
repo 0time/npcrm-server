@@ -1,0 +1,25 @@
+module.exports = {
+  JSON_SELECTORS: {
+    APP: 'config.webServer.app',
+    ASSUME_ID_FIELD_MEANS_UPDATE: 'assumeIdFieldMeansUpdate',
+    ENABLE_DB_VERSIONING: 'config.enableDbVersioning',
+    FIELDS: 'fields',
+    GET_SEL: 'get',
+    LOGGER: 'logger',
+    OFFSET: 'offset',
+    PAGE_SIZE: 'pageSize',
+    POOL: 'dbConnPool',
+    POOL_CONF: 'config.db',
+    POOL_END: 'dbConnPool.end',
+    POOL_KEY: 'dbConnPool.pgPool',
+    POOL_QUERY: 'dbConnPool.query',
+    POSTGRES_DB_VERSIONING_CONFIG: 'postgresDbVersioning',
+    PUT_SEL: 'put',
+    TABLE_NAME: 'tableName',
+    TEST_LOGGER: 'config.testLogger',
+    WHERE: 'where',
+  },
+  MODEL: {
+    DEFAULT_PAGE_SIZE: 10,
+  },
+};

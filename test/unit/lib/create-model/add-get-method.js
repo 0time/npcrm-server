@@ -1,3 +1,9 @@
+const getMockLogger = require('../../../lib/get-mock-logger');
+const {
+  JSON_SELECTORS: { GET_SEL, LOGGER, POOL, TABLE_NAME },
+} = require('../../../../src/lib/constants');
+const { set } = require('@0ti.me/tiny-pfp');
+
 const {
   d,
   expect,
@@ -5,10 +11,6 @@ const {
   tquire,
   uuid,
 } = deps;
-const { set } = require('@0ti.me/tiny-pfp');
-const {
-  JSON_SELECTORS: { GET_SEL, POOL, TABLE_NAME },
-} = require('../../../../src/lib/constants');
 
 const me = __filename;
 
@@ -19,6 +21,7 @@ d(me, () => {
   let context = null;
   let fields = null;
   let GET = null;
+  let logger = null;
   let model = null;
   let pool = null;
   let query = null;
@@ -26,6 +29,7 @@ d(me, () => {
   let tableName = null;
 
   beforeEach(() => {
+    logger = getMockLogger();
     queryResult = `query-result-${uuid()}`;
     query = stub().resolves({ rows: queryResult });
     tableName = `table-name-${uuid()}`;
@@ -39,6 +43,7 @@ d(me, () => {
     set(pool, 'query', query);
 
     set(context, POOL, pool);
+    set(context, LOGGER, logger);
     set(config, TABLE_NAME, tableName);
 
     set(config, GET_SEL, GET);

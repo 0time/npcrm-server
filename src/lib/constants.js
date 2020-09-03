@@ -1,6 +1,7 @@
 module.exports = {
   JSON_SELECTORS: {
     APP: 'config.webServer.app',
+    ALLOW_DELETE_MULTIPLE: 'allowDeleteMultiple',
     ASSUME_ID_FIELD_MEANS_UPDATE: 'assumeIdFieldMeansUpdate',
     ENABLE_DB_VERSIONING: 'config.enableDbVersioning',
     FIELDS: 'fields',

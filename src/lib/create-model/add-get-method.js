@@ -21,6 +21,8 @@ module.exports = (context, config) => (model) => {
   if (GET !== false) {
     if (get(GET, 'custom', false) === false) {
       model.get = (options) => {
+        context.logger.trace(options);
+
         const modelFields = get(GET, FIELDS, false);
         const fields = get(options, FIELDS, modelFields);
         const offset = get(options, OFFSET, false);

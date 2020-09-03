@@ -19,6 +19,8 @@ module.exports = (context, config) => (model) => {
   if (PUT !== false) {
     if (get(PUT, 'custom', false) === false) {
       model.put = (entity, options = {}) => {
+        context.logger.trace(options);
+
         const assumeIdFieldMeansUpdate = get(
           PUT,
           ASSUME_ID_FIELD_MEANS_UPDATE,
@@ -74,8 +76,6 @@ module.exports = (context, config) => (model) => {
         } else {
           throw new Error('implement updating an existing record');
         }
-
-        context.logger.trace(options);
 
         const formattedQuery = pgFormat(
           queryStringBuilder.join(' '),

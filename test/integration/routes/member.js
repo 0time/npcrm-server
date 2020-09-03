@@ -1,7 +1,9 @@
 const { get } = require('@0ti.me/tiny-pfp');
 const {
+  HTTP_METHODS: { GET },
   JSON_SELECTORS: { POOL },
 } = require('../../../src/lib/constants');
+const { OK } = require('http-status-codes');
 const supertestCreator = require('../../lib/supertest');
 
 const { bluebird, d, uuid } = deps;
@@ -23,21 +25,21 @@ d(me, () => {
     });
   });
 
-  describe('get', () => {
+  describe(GET, () => {
     let data = null;
 
     beforeEach(() => {
       data = `data-${uuid()}`;
 
-      get(
-        context,
-        POOL,
-      ).bindQueryAndResponse('SELECT * FROM "Member" LIMIT \'10\'', {
-        rows: data,
-      });
+      get(context, POOL).bindQueryAndResponse(
+        'SELECT * FROM "Member" LIMIT \'10\'',
+        {
+          rows: data,
+        },
+      );
     });
 
-    it('should respond with 200 and the result of the query', () =>
-      supertest.get('/api/member').expect(200, { data }));
+    it('should respond with OK and the result of the query', () =>
+      supertest.get('/api/member').expect(OK, { data }));
   });
 });

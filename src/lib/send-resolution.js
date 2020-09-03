@@ -3,7 +3,7 @@ const { INTERNAL_SERVER_ERROR, OK } = require('http-status-codes');
 const parseResponse = require('./parse-response');
 
 // The function should promise an object with a response (response for text or jsonRespone for json)
-// and an optional status code (200 OK is assumed if absent)
+// and an optional status code (OK is assumed if absent)
 module.exports = (context, fnMayPromise, singleArgumentCall = true) => (
   req,
   res,

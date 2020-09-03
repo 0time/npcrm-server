@@ -1,4 +1,5 @@
 module.exports = {
+  HTTP_METHODS: { DELETE: 'delete', GET: 'get', POST: 'post', PUT: 'put' },
   JSON_SELECTORS: {
     APP: 'config.webServer.app',
     ALLOW_DELETE_MULTIPLE: 'allowDeleteMultiple',

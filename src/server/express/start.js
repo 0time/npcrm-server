@@ -1,6 +1,7 @@
 const express = require('express');
 const { get, set } = require('@0ti.me/tiny-pfp');
 const {
+  HTTP_METHODS: { GET },
   JSON_SELECTORS: { APP },
 } = require('../../lib/constants');
 const middlewares = require('../../middlewares');
@@ -30,7 +31,7 @@ module.exports = (context) => {
       .map((ea) => ea(context))
       .forEach((route) => {
         const setupRoute = (routeConfig) =>
-          router[get(routeConfig, 'method', 'get')](
+          router[get(routeConfig, 'method', GET)](
             get(routeConfig, 'route'),
             get(routeConfig, 'impl'),
           );

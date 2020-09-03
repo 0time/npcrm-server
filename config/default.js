@@ -25,7 +25,7 @@ module.exports = {
           if (info instanceof Error) {
             info.message = info.stack;
           } else if (typeof info.message === 'object') {
-            info.message = util.inspect(info.message);
+            info.message = util.inspect(info.message, { depth: 5 });
           }
 
           return info;
@@ -60,7 +60,7 @@ module.exports = {
         warn: 'bold yellow',
         info: 'bold cyan',
         debug: 'cyan',
-        trace: 'gray', // 'italic cyan',
+        trace: 'italic gray',
       },
     },
   },

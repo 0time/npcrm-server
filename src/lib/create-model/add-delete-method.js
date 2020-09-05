@@ -18,9 +18,9 @@ module.exports = (context, config) => (model) => {
 
   if (DELETE !== false) {
     if (get(DELETE, 'custom', false) === false) {
-      model.delete = (entity, options = {}) =>
+      model.delete = (options) =>
         Promise.resolve().then(() => {
-          context.logger.trace(options);
+          context.logger.trace({ deleteOptions: options, tableName });
 
           const allowDeleteMultiple = get(DELETE, ALLOW_DELETE_MULTIPLE, false);
           const idField = get(DELETE, ID_FIELD, 'id');
@@ -33,7 +33,7 @@ module.exports = (context, config) => (model) => {
           if (allowDeleteMultiple === true && where !== false) {
             throw new Error(`implement deletion using where ${where}`);
           } else {
-            const id = get(entity, idField, false);
+            const id = get(options, idField, false);
 
             if (id === false) {
               throw new Error(
@@ -52,10 +52,8 @@ module.exports = (context, config) => (model) => {
             ...pgFormatBuilder,
           );
 
-          return (queryStringParameters.length > 0
-            ? pool.query(formattedQuery, queryStringParameters)
-            : pool.query(formattedQuery)
-          )
+          return pool
+            .query(formattedQuery, queryStringParameters)
             .then(fp.get('rows'))
             .then((data) => ({ response: { data } }));
         });

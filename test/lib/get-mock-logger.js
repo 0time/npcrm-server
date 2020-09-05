@@ -47,7 +47,7 @@ module.exports = () => {
 
 afterEach(function () {
   if (TESTING_VERBOSE !== undefined || this.currentTest.state === 'failed') {
-    const logs = [];
+    const logs = ['', '=== All Logs ==='];
 
     savedLoggers.forEach((logger, i1) =>
       logger.orderedArgs.forEach((args) =>
@@ -56,7 +56,16 @@ afterEach(function () {
     );
 
     // eslint-disable-next-line no-console
-    console.error(logs.join('\n'));
+    if (logs.length > 2) {
+      logs.push('=== End of Logs ====');
+      logs.push('');
+
+      console.error(logs.join('\n'));
+
+      logs[0] = '\n';
+
+      this.currentTest.err.message += logs.join('\n');
+    }
   }
 
   savedLoggers = [];

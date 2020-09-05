@@ -22,7 +22,7 @@ module.exports = (context, config) => (model) => {
     if (get(GET, 'custom', false) === false) {
       model.get = (options) =>
         context.Promise.resolve().then(() => {
-          context.logger.trace(options);
+          context.logger.trace({ getOptions: options, tableName });
 
           const modelFields = get(GET, FIELDS, false);
           const fields = get(options, FIELDS, modelFields);

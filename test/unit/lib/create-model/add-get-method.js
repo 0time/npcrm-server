@@ -1,6 +1,14 @@
 const getMockLogger = require('../../../lib/get-mock-logger');
 const {
-  JSON_SELECTORS: { GET_SEL, LOGGER, OFFSET, PAGE_SIZE, POOL, TABLE_NAME },
+  JSON_SELECTORS: {
+    GET_SEL,
+    LOGGER,
+    OFFSET,
+    PAGE_SIZE,
+    POOL,
+    TABLE_NAME,
+    WHERE,
+  },
 } = require('../../../../src/lib/constants');
 const { set, unset } = require('@0ti.me/tiny-pfp');
 
@@ -131,7 +139,7 @@ d(me, () => {
 
     describe('given a where clause', () => {
       beforeEach(() => {
-        set(options, 'where', null);
+        set(options, WHERE, null);
       });
 
       it('should reject with an error while it is not implemented', () =>

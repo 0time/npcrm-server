@@ -69,7 +69,7 @@ module.exports = (context, config) => (model) => {
 
             queryStringBuilder = queryStringBuilder.concat(addToEnd);
 
-            queryStringBuilder.push(')');
+            queryStringBuilder.push(');');
           } else {
             throw new Error('TODO: Implement fields implementation');
           }
@@ -102,7 +102,7 @@ module.exports = (context, config) => (model) => {
 
           // TODO: find every instance of shoving numbers into strings like this and use pgFormat instead.
           queryStringBuilder.push(
-            `WHERE %I = $${queryStringParameters.length + 1}`,
+            `WHERE %I = $${queryStringParameters.length + 1};`,
           );
           pgFormatBuilder.push(idField);
           queryStringParameters.push(entity[idField]);

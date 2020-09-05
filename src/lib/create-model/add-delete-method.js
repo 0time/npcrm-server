@@ -40,7 +40,7 @@ module.exports = (context, config) => (model) => {
             );
           }
 
-          queryStringBuilder.push('DELETE FROM %I WHERE %I = $1');
+          queryStringBuilder.push('DELETE FROM %I WHERE %I = $1;');
           pgFormatBuilder.push(tableName);
           pgFormatBuilder.push(idField);
           queryStringParameters.push(id);

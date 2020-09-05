@@ -2,9 +2,17 @@ const express = require('express');
 const { get, set } = require('@0ti.me/tiny-pfp');
 const {
   HTTP_METHODS: { GET },
-  JSON_SELECTORS: { APP },
+  JSON_SELECTORS: {
+    APP,
+    EXPRESS_IMPLEMENTATION,
+    HTTP_METHOD,
+    MIDDLEWARES,
+    ROUTE,
+    WEB_SERVER_START_TIMEOUT,
+  },
 } = require('../../lib/constants');
 const middlewares = require('../../middlewares');
+const processParameters = require('../../middlewares/process-parameters');
 const rejectAfterTimeout = require('../../lib/reject-after-timeout');
 const routes = require('../../routes');
 
@@ -19,22 +27,37 @@ module.exports = (context) => {
   return new context.Promise((resolve, reject) => {
     let resolved = false;
 
-    const timeout = get(context, 'config.webServer.startTimeoutMs');
+    const timeout = get(context, WEB_SERVER_START_TIMEOUT);
 
     rejectAfterTimeout(context)({ reject, resolved, timeout });
 
     middlewares(context).forEach((mw) => app.use(mw));
+
+    // If not specified, we'll use these default middlewares to set up the routes,
+    // if you set the MIDDLEWARES key and you want processParameters, be sure to specify it in your
+    // MIDDLEWARES list.
+    const DEFAULT_DYNAMIC_ROUTE_MIDDLEWARES = [processParameters(context)];
 
     // TODO: This needs work, probably. Nested keys would not work at all, I think.
     // Probably need to generalize this and put it into a library for re-use anyway.
     Object.values(routes)
       .map((ea) => ea(context))
       .forEach((route) => {
-        const setupRoute = (routeConfig) =>
-          router[get(routeConfig, 'method', GET)](
-            get(routeConfig, 'route'),
-            get(routeConfig, 'impl'),
+        const setupRoute = (routeConfig) => {
+          const route = get(routeConfig, ROUTE, false);
+          const impl = get(routeConfig, EXPRESS_IMPLEMENTATION, false);
+          const mws = get(
+            routeConfig,
+            MIDDLEWARES,
+            DEFAULT_DYNAMIC_ROUTE_MIDDLEWARES,
           );
+          const method = get(routeConfig, HTTP_METHOD, GET);
+
+          const register = (...expressCb) =>
+            router[method](route, ...expressCb);
+
+          return register(...mws, impl);
+        };
 
         if (Array.isArray(route)) {
           return route.forEach(setupRoute);

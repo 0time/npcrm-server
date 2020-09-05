@@ -7,7 +7,7 @@ module.exports = {
   webServer: {
     basePath: '/api',
     port: 53241,
-    startTimeoutMs: 50,
+    startTimeoutMs: 500,
     stopTimeoutMs: 50,
   },
 };

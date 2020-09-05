@@ -10,12 +10,15 @@ const { _ } = deps;
 let savedLoggers = [];
 
 module.exports = () => {
-  const logger = mapValues(loggingLevels, () => {
+  const orderedArgs = [];
+
+  const logger = mapValues(loggingLevels, (value, level) => {
     const args = [];
 
     const logFn = (...callArgs) => {
-      args.push(
-        _.clone(
+      const orderedArg = {
+        level,
+        message: _.clone(
           callArgs.map((ea) => {
             if (_.isError(ea)) {
               return ea.stack.split('\n');
@@ -24,13 +27,18 @@ module.exports = () => {
             }
           }),
         ),
-      );
+      };
+
+      args.push(_.clone(orderedArg.message));
+      orderedArgs.push(orderedArg);
     };
 
     logFn.args = args;
 
     return logFn;
   });
+
+  logger.orderedArgs = orderedArgs;
 
   savedLoggers.push(logger);
 
@@ -42,12 +50,8 @@ afterEach(function () {
     const logs = [];
 
     savedLoggers.forEach((logger, i1) =>
-      mapValues(logger, (fn, level) =>
-        fn.args.length > 0
-          ? logs.push(
-              `${level} [i1: ${i1}]: ${JSON.stringify(fn.args, null, 2)}`,
-            )
-          : fn,
+      logger.orderedArgs.forEach((args) =>
+        logs.push(`${args.level} [i1: ${i1}]: ${JSON.stringify(args.message)}`),
       ),
     );
 

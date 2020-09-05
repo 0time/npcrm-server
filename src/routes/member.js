@@ -1,42 +1,38 @@
 const {
   HTTP_METHODS: { DELETE, GET, PUT },
+  JSON_SELECTORS: {
+    EXPRESS_IMPLEMENTATION,
+    HTTP_METHOD,
+    OPTIONS_ON_REQUEST,
+    ROUTE,
+  },
 } = require('../lib/constants');
 const member = require('../lib/model/member');
-const { pick } = require('@0ti.me/tiny-pfp');
+const { get } = require('@0ti.me/tiny-pfp');
 const sendResolution = require('../lib/send-resolution');
-
-// This should be a middleware with validation based on the method of the request.
-const getOptions = (context, req) => {
-  const inputs = pick(req, ['body', 'params', 'query']);
-  const options = Object.assign({}, inputs.params, inputs.query, inputs.body);
-
-  context.logger.trace({ inputs, options });
-
-  return options;
-};
 
 const MEMBER_ROUTE = '/member';
 
 module.exports = (context) => [
   {
-    route: MEMBER_ROUTE,
-    method: GET,
-    impl: sendResolution(context, ({ req }) =>
-      member(context).get(getOptions(context, req)),
+    [ROUTE]: MEMBER_ROUTE,
+    [HTTP_METHOD]: GET,
+    [EXPRESS_IMPLEMENTATION]: sendResolution(context, ({ req }) =>
+      member(context).get(get(req, OPTIONS_ON_REQUEST)),
     ),
   },
   {
-    route: MEMBER_ROUTE,
-    method: PUT,
-    impl: sendResolution(context, ({ req }) =>
-      member(context).put(getOptions(context, req)),
+    [ROUTE]: MEMBER_ROUTE,
+    [HTTP_METHOD]: PUT,
+    [EXPRESS_IMPLEMENTATION]: sendResolution(context, ({ req }) =>
+      member(context).put(get(req, OPTIONS_ON_REQUEST)),
     ),
   },
   {
-    route: MEMBER_ROUTE,
-    method: DELETE,
-    impl: sendResolution(context, ({ req }) =>
-      member(context).delete(getOptions(context, req)),
+    [ROUTE]: MEMBER_ROUTE,
+    [HTTP_METHOD]: DELETE,
+    [EXPRESS_IMPLEMENTATION]: sendResolution(context, ({ req }) =>
+      member(context).delete(get(req, OPTIONS_ON_REQUEST)),
     ),
   },
 ];

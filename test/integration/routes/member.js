@@ -1,4 +1,4 @@
-const { get } = require('@0ti.me/tiny-pfp');
+const { get, set } = require('@0ti.me/tiny-pfp');
 const {
   HTTP_METHODS: { GET },
   JSON_SELECTORS: { POOL },
@@ -6,16 +6,22 @@ const {
 const { OK } = require('http-status-codes');
 const supertestCreator = require('../../lib/supertest');
 
-const { bluebird, d, uuid } = deps;
+const { _, bluebird, d, uuid } = deps;
 
 const me = __filename;
 
 d(me, () => {
+  let config = null;
   let context = null;
   let supertest = null;
 
   beforeEach(() => {
     context = {};
+
+    config = _.clone(require('config'));
+
+    set(context, 'config', config);
+
     const promises = {};
 
     promises.supertest = supertestCreator.initializeSupertest(context);

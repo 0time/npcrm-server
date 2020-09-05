@@ -71,6 +71,8 @@ module.exports = (context, config) => (model) => {
             }
           }
 
+          // TODO: Order By / Sort By
+
           return pool
             .query(pgFormat(queryStringBuilder.join(' '), ...pgFormatBuilder))
             .then(fp.get('rows'))

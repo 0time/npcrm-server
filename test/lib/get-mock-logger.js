@@ -55,11 +55,11 @@ afterEach(function () {
       ),
     );
 
-    // eslint-disable-next-line no-console
     if (logs.length > 2) {
       logs.push('=== End of Logs ====');
       logs.push('');
 
+      // eslint-disable-next-line no-console
       console.error(logs.join('\n'));
 
       logs[0] = '\n';

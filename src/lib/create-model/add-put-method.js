@@ -2,6 +2,7 @@ const { fp, get } = require('@0ti.me/tiny-pfp');
 const {
   JSON_SELECTORS: {
     ASSUME_ID_FIELD_MEANS_UPDATE,
+    FIELDS,
     ID_FIELD,
     POOL,
     PUT_SEL,
@@ -18,16 +19,16 @@ module.exports = (context, config) => (model) => {
 
   if (PUT !== false) {
     if (get(PUT, 'custom', false) === false) {
-      model.put = (entity, options = {}) =>
+      model.put = (options) =>
         Promise.resolve().then(() => {
-          context.logger.trace(options);
+          context.logger.trace({ putOptions: options, tableName });
 
           const assumeIdFieldMeansUpdate = get(
             PUT,
             ASSUME_ID_FIELD_MEANS_UPDATE,
             true,
           );
-          const fields = Object.keys(entity);
+          const fields = get(options, FIELDS, Object.keys(options));
           const idField = get(PUT, ID_FIELD, 'id');
           const where = get(options, WHERE, false);
 
@@ -43,7 +44,7 @@ module.exports = (context, config) => (model) => {
           let queryStringBuilder = [];
           let queryStringParameters = [];
 
-          if (get(entity, idField, false) === false) {
+          if (get(options, idField, false) === false) {
             queryStringBuilder.push('INSERT INTO %I');
             pgFormatBuilder.push(tableName);
 
@@ -53,7 +54,7 @@ module.exports = (context, config) => (model) => {
               let addToEnd = [];
 
               fields.forEach((field, i, ray) => {
-                queryStringParameters.push(get(entity, field));
+                queryStringParameters.push(get(options, field));
 
                 if (i === ray.length - 1) {
                   queryStringBuilder.push('%I');
@@ -72,7 +73,9 @@ module.exports = (context, config) => (model) => {
 
               queryStringBuilder.push(');');
             } else {
-              throw new Error('TODO: Implement fields implementation');
+              throw new Error(
+                'fields property was supplied but not an array as expected',
+              );
             }
 
             if (where !== false) {
@@ -87,10 +90,10 @@ module.exports = (context, config) => (model) => {
             for (let i = 0; i < fields.length; ++i) {
               if (fields[i] !== idField) {
                 queryStringBuilder.push(
-                  `%I = $${queryStringParameters.length + 1},`,
+                  `%I = $${queryStringParameters.length + 1} ,`,
                 );
                 pgFormatBuilder.push(fields[i]);
-                queryStringParameters.push(entity[fields[i]]);
+                queryStringParameters.push(options[fields[i]]);
 
                 fixLast = true;
               }
@@ -98,7 +101,7 @@ module.exports = (context, config) => (model) => {
 
             if (fixLast === true) {
               const i = queryStringBuilder.length - 1;
-              queryStringBuilder[i] = queryStringBuilder[i].slice(0, -1);
+              queryStringBuilder[i] = queryStringBuilder[i].slice(0, -2);
             }
 
             // TODO: find every instance of shoving numbers into strings like this and use pgFormat instead.
@@ -106,7 +109,7 @@ module.exports = (context, config) => (model) => {
               `WHERE %I = $${queryStringParameters.length + 1};`,
             );
             pgFormatBuilder.push(idField);
-            queryStringParameters.push(entity[idField]);
+            queryStringParameters.push(options[idField]);
           }
 
           const formattedQuery = pgFormat(
@@ -114,10 +117,8 @@ module.exports = (context, config) => (model) => {
             ...pgFormatBuilder,
           );
 
-          return (queryStringParameters.length > 0
-            ? pool.query(formattedQuery, queryStringParameters)
-            : pool.query(formattedQuery)
-          )
+          return pool
+            .query(formattedQuery, queryStringParameters)
             .then(fp.get('rows'))
             .then((data) => ({ response: { data } }));
         });

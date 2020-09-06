@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@0ti.me/index-generator": "^0.1.9",
-    "@0ti.me/test-deps": "0.1.20",
+    "@0ti.me/test-deps": "0.1.21",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "nodemon": "^2.0.4",

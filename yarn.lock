@@ -30,10 +30,10 @@
     pg "^8.3.2"
     pg-format "^1.0.4"
 
-"@0ti.me/test-deps@0.1.20":
-  version "0.1.20"
-  resolved "https://registry.yarnpkg.com/@0ti.me/test-deps/-/test-deps-0.1.20.tgz#300b08eb058ba3412f1a9dfeabff90014df3703d"
-  integrity sha512-skA+XgCqCk1QbSmNd6usPb8ssveXksIA0HnpPpiPsX1nB8j5xP9SqLTDTCFbV8UzRJovl4hPr1K9nSyGaBDNuQ==
+"@0ti.me/test-deps@0.1.21":
+  version "0.1.21"
+  resolved "https://registry.yarnpkg.com/@0ti.me/test-deps/-/test-deps-0.1.21.tgz#42c49d5e23ba78c4c543d07ed05f0b78a276d90c"
+  integrity sha512-oICSZiMFCuDSwFPqqd0AOGcrArMIKO8v/JbAlB6UAJ8XmTgraJlftbPjpB6yTtA2fj5TepuRsaYr1B7FglYZ6A==
   dependencies:
     "@0ti.me/en-path" "^0.1.0"
     bluebird "^3.7.1"

@@ -102,6 +102,8 @@ module.exports = (context, config) => (model) => {
             if (fixLast === true) {
               const i = queryStringBuilder.length - 1;
               queryStringBuilder[i] = queryStringBuilder[i].slice(0, -2);
+            } else {
+              throw new Error('did not find any fields to update');
             }
 
             // TODO: find every instance of shoving numbers into strings like this and use pgFormat instead.

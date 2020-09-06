@@ -69,45 +69,58 @@ d(me, () => {
   });
 
   describe('model.put', () => {
-    describe('given an id and a field', () => {
+    describe('given an id', () => {
       let id = null;
-      let name = null;
 
       beforeEach(() => {
         id = nextInt();
-        name = `name-${uuid()}`;
 
-        options = { id, name };
+        options = { id };
       });
 
-      it('should try to update the record', () =>
-        shortcutPut().then(() =>
-          expect(
-            query,
-          ).to.have.been.calledOnceWithExactly(
-            `UPDATE "${tableName}" SET name = $1 WHERE id = $2;`,
-            [name, id],
-          ),
-        ));
+      it('should reject because no updates were requested', () =>
+        expect(
+          addPutMethod(context, config)(model).put(options),
+        ).to.eventually.be.rejectedWith('did not find any fields to update'));
 
-      describe('and another field', () => {
-        let email = null;
+      describe('and a field', () => {
+        let name = null;
 
         beforeEach(() => {
-          email = `email-${uuid()}`;
+          name = `name-${uuid()}`;
 
-          set(options, 'email', email);
+          options = { id, name };
         });
 
-        it('should try to update the record, separating each set of key/values by commas', () =>
+        it('should try to update the record', () =>
           shortcutPut().then(() =>
             expect(
               query,
             ).to.have.been.calledOnceWithExactly(
-              `UPDATE "${tableName}" SET name = $1 , email = $2 WHERE id = $3;`,
-              [name, email, id],
+              `UPDATE "${tableName}" SET name = $1 WHERE id = $2;`,
+              [name, id],
             ),
           ));
+
+        describe('and another field', () => {
+          let email = null;
+
+          beforeEach(() => {
+            email = `email-${uuid()}`;
+
+            set(options, 'email', email);
+          });
+
+          it('should try to update the record, separating each set of key/values by commas', () =>
+            shortcutPut().then(() =>
+              expect(
+                query,
+              ).to.have.been.calledOnceWithExactly(
+                `UPDATE "${tableName}" SET name = $1 , email = $2 WHERE id = $3;`,
+                [name, email, id],
+              ),
+            ));
+        });
       });
     });
 

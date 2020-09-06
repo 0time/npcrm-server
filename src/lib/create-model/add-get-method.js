@@ -45,7 +45,7 @@ module.exports = (context, config) => (model) => {
 
             fields.forEach((field, index) => {
               if (index < fields.length - 1) {
-                queryStringBuilder.push('%I,');
+                queryStringBuilder.push('%I ,');
               } else {
                 queryStringBuilder.push('%I');
               }

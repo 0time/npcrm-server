@@ -1,6 +1,7 @@
 const getMockLogger = require('../../../lib/get-mock-logger');
 const {
   JSON_SELECTORS: {
+    FIELDS,
     GET_SEL,
     LOGGER,
     OFFSET,
@@ -73,7 +74,7 @@ d(me, () => {
       beforeEach(() => {
         fields = undefined;
 
-        set(options, 'fields', fields);
+        set(options, FIELDS, fields);
       });
 
       it('should use an asterisk', () =>
@@ -94,13 +95,13 @@ d(me, () => {
 
         fields = [field1, field2];
 
-        set(options, 'fields', fields);
+        set(options, FIELDS, fields);
       });
 
       it('should select by those fields and separate them by a comma', () =>
         shortcutGet().then(() =>
           expect(query).to.have.been.calledOnceWithExactly(
-            `SELECT "${field1}", "${field2}" FROM "${tableName}" LIMIT '10'`,
+            `SELECT "${field1}" , "${field2}" FROM "${tableName}" LIMIT '10'`,
           ),
         ));
     });
@@ -113,7 +114,7 @@ d(me, () => {
 
         fields = [field1];
 
-        set(options, 'fields', fields);
+        set(options, FIELDS, fields);
       });
 
       it('should select by that field', () =>
@@ -128,7 +129,7 @@ d(me, () => {
       beforeEach(() => {
         fields = null;
 
-        set(options, 'fields', fields);
+        set(options, FIELDS, fields);
       });
 
       it('should reject with an error', () =>

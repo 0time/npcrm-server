@@ -7,7 +7,7 @@ const getMockLogger = require('./get-mock-logger');
 const getMockProcess = require('./get-mock-process');
 const { get, has, set } = require('@0ti.me/tiny-pfp');
 const {
-  JSON_SELECTORS: { APP, LOGGER, POOL },
+  JSON_SELECTORS: { WEB_SERVER_APP, LOGGER, POOL },
 } = require('../../src/lib/constants');
 const supertest = require('supertest');
 
@@ -48,7 +48,7 @@ const initializeSupertest = (context) =>
       }
 
       return app(context).then(() => {
-        instance = supertest(get(context, APP));
+        instance = supertest(get(context, WEB_SERVER_APP));
 
         return instance;
       });

@@ -3,33 +3,39 @@ const { get, set } = require('@0ti.me/tiny-pfp');
 const {
   HTTP_METHODS: { GET },
   JSON_SELECTORS: {
-    APP,
     EXPRESS_IMPLEMENTATION,
     HTTP_METHOD,
     MIDDLEWARES,
     ROUTE,
+    WEB_SERVER_APP,
+    WEB_SERVER_BASE_PATH,
+    WEB_SERVER_CONNECTIONS,
+    WEB_SERVER_INSTANCE,
     WEB_SERVER_START_TIMEOUT,
   },
-} = require('../../lib/constants');
-const middlewares = require('../../middlewares');
-const processParameters = require('../../middlewares/process-parameters');
-const rejectAfterTimeout = require('../../lib/reject-after-timeout');
-const routes = require('../../routes');
+} = require('../../../lib/constants');
+const listen = require('./listen');
+const logErrorMiddleware = require('../../../middlewares/log-error-middleware');
+const onConnectionHandler = require('./instance-on-connection-handler');
+const middlewares = require('../../../middlewares');
+const processParameters = require('../../../middlewares/process-parameters');
+const rejectAfterTimeout = require('../../../lib/reject-after-timeout');
+const routes = require('../../../routes');
 
-module.exports = (context) => {
-  const app = express();
-  const router = express.Router();
-
-  set(context, APP, app);
-
+module.exports = (context) =>
   // Promise to resolve if the webServer starts
   // and reject if it fails to start
-  return new context.Promise((resolve, reject) => {
+  new context.Promise((resolve, reject) => {
     let resolved = false;
 
     const timeout = get(context, WEB_SERVER_START_TIMEOUT);
 
+    context.logger.trace(`Setting a rejection timeout for ${timeout}ms`);
     rejectAfterTimeout(context)({ reject, resolved, timeout });
+
+    const app = express();
+    const basePath = get(context, WEB_SERVER_BASE_PATH);
+    const router = express.Router();
 
     middlewares(context).forEach((mw) => app.use(mw));
 
@@ -66,40 +72,20 @@ module.exports = (context) => {
         }
       });
 
-    const errorMiddleware = (err, req, res, next) => {
-      context.logger.error(err);
+    app.use(basePath, router);
+    app.use(logErrorMiddleware(context));
 
-      return next(err);
-    };
+    set(context, WEB_SERVER_APP, app);
+    set(context, WEB_SERVER_CONNECTIONS, []);
 
-    app.use(context.config.webServer.basePath, router);
+    return listen(context).then(() => {
+      const instance = get(context, WEB_SERVER_INSTANCE);
 
-    app.use(errorMiddleware);
+      instance.on('connection', onConnectionHandler(context));
 
-    context.webServer.instance = app.listen(
-      context.config.webServer.port,
-      () => {
+      if (resolved === false) {
         resolved = true;
-
-        context.logger.info(
-          `Server is up and listening on ${context.config.webServer.port}`,
-        );
-
         resolve(context);
-      },
-    );
-
-    context.webServer.connections = [];
-
-    context.webServer.instance.on('connection', (connection) => {
-      context.webServer.connections.push(connection);
-      connection.on(
-        'close',
-        () =>
-          (context.webServer.connections = context.webServer.connections.filter(
-            (curr) => curr !== connection,
-          )),
-      );
+      }
     });
   });
-};

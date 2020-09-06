@@ -1,4 +1,8 @@
 module.exports = {
+  HTTP_HEADERS: {
+    CONTENT_TYPE: 'content-type',
+    DEPRECATED: 'x-deprecated-endpoint',
+  },
   HTTP_METHODS: { DELETE: 'delete', GET: 'get', POST: 'post', PUT: 'put' },
   JSON_SELECTORS: {
     APP: 'config.webServer.app',

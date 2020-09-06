@@ -1,10 +1,10 @@
 const nycConfig = require('@0ti.me/test-deps/configuration-templates/nyc.config');
 const { NODE_ENV } = process.env;
 
-let requiredPercent = 30;
+let requiredPercent = 53;
 
 if (NODE_ENV === 'unit') {
-  requiredPercent = 10;
+  requiredPercent = 32;
 }
 
 module.exports = Object.assign(

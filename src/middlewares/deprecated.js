@@ -4,10 +4,14 @@ const {
 
 module.exports = (req, res, next) => {
   if (req.headersSent === true) {
-    throw new Error(`${__filename} middleware called after headers sent`);
+    throw new Error(
+      `${__filename.substr(
+        __dirname.length + 1,
+      )} middleware called after headers sent`,
+    );
   }
 
   res.set(DEPRECATED, true);
 
-  next();
+  return next();
 };

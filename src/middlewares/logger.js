@@ -2,8 +2,8 @@ const { pick } = require('@0ti.me/tiny-pfp');
 
 module.exports = (context) => (req, _, next) => {
   try {
-    context.logger.info({
-      message: Object.assign(
+    context.logger.info(
+      Object.assign(
         {
           message: 'Logger express middleware triggered',
         },
@@ -15,10 +15,10 @@ module.exports = (context) => (req, _, next) => {
           'url',
         ]),
       ),
-    });
+    );
   } catch (err) {
     context.logger.error(err);
   }
 
-  next();
+  return next();
 };

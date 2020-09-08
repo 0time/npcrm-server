@@ -7,7 +7,6 @@ const {
     MIDDLEWARES,
     ROUTE,
     WEB_SERVER_APP,
-    WEB_SERVER_CONNECTIONS,
     WEB_SERVER_PORT,
     WEB_SERVER_START_TIMEOUT,
   },
@@ -32,18 +31,16 @@ d(me, () => {
   let mockApp = null;
   let mockBasePath = null;
   let mockDefineMethodHandler = null;
+  let mockFinalizeAfterListen = null;
   let mockImplementation1 = null;
   let mockImplementation2 = null;
   let mockInstance = null;
-  let mockInstanceOnConnectionHandler = null;
-  let mockInstanceOnConnectionHandlerCreator = null;
   let mockListen = null;
   let mockLogErrorMiddleware = null;
   let mockLogErrorMiddlewareCreator = null;
   let mockLogger = null;
   let mockMethod = null;
   let mockMiddlewares = null;
-  let mockInstanceOn = null;
   let mockListenDeliberateWait = null;
   let mockPort = null;
   let mockProcessParameters = null;
@@ -109,13 +106,8 @@ d(me, () => {
       '../../../middlewares/log-error-middleware'
     ] = mockLogErrorMiddlewareCreator;
 
-    mockInstanceOnConnectionHandler = `mock-instance-on-connection-handler-${uuid()}`;
-    mockInstanceOnConnectionHandlerCreator = stub().returns(
-      mockInstanceOnConnectionHandler,
-    );
-    mocks[
-      './instance-on-connection-handler'
-    ] = mockInstanceOnConnectionHandlerCreator;
+    mockFinalizeAfterListen = spy((context, obj) => obj.resolve(context));
+    mocks['./finalize-after-listen'] = mockFinalizeAfterListen;
 
     mockBasePath = `mock-base-path-${uuid()}`;
     set(context, 'config', config);
@@ -124,11 +116,7 @@ d(me, () => {
     set(context, WEB_SERVER_PORT, mockPort);
     set(context, WEB_SERVER_BASE_PATH, mockBasePath);
 
-    mockInstanceOn = spy((eventName, handler) => {
-      expect(eventName).to.equal('connection');
-      expect(handler).to.equal(mockInstanceOnConnectionHandler);
-    });
-    mockInstance = { on: mockInstanceOn };
+    mockInstance = `mock-instance-${uuid()}`;
     // override mockListenDeliberateWait to make it wait a different amount of time before calling back after listen
     mockListenDeliberateWait = 0;
     mockListen = spy((port, callback) => {
@@ -152,19 +140,6 @@ d(me, () => {
   it('should set the app property', () =>
     expect(start()).to.eventually.be.fulfilled.then(() => {
       expect(context).to.have.nested.property(WEB_SERVER_APP, mockApp);
-    }));
-
-  it('should initialize the connections list and add/remove as connections come and go', () =>
-    expect(start()).to.eventually.be.fulfilled.then(() => {
-      expect(context).to.have.deep.nested.property(WEB_SERVER_CONNECTIONS, []);
-
-      expect(
-        mockInstanceOnConnectionHandlerCreator,
-      ).to.have.been.calledOnceWithExactly(context);
-      expect(mockInstanceOn).to.have.been.calledOnceWithExactly(
-        'connection',
-        mockInstanceOnConnectionHandler,
-      );
     }));
 
   it('should resolve with the context', () =>
@@ -269,17 +244,24 @@ d(me, () => {
 
   describe('given a timeout', () => {
     let mockTimeoutError = null;
+    let savedCallback = null;
+    let savedObj = null;
 
     beforeEach(() => {
+      savedCallback = null;
+
       // eslint-disable-next-line no-unused-vars
       mockListen = spy((port, callback) => {
         expect(port).to.equal(mockPort);
         expect(callback).to.be.a('function');
         // Never callback
         //setTimeout(callback, mockListenDeliberateWait);
+        expect(savedCallback).to.equal(null);
+        savedCallback = callback;
 
         return mockInstance;
       });
+
       mockUse = stub();
       mockApp = { listen: mockListen, use: mockUse };
       mockExpress = Object.assign(() => mockApp, { Router: getMockRouter });
@@ -288,8 +270,12 @@ d(me, () => {
       set(context, WEB_SERVER_START_TIMEOUT, 1);
 
       mockTimeoutError = `mock-timeout-error-${uuid()}`;
-      mockRejectAfterTimeout = ({ reject }) =>
-        setTimeout(() => reject(mockTimeoutError), 0);
+      savedObj = null;
+      mockRejectAfterTimeout = (obj) => {
+        expect(savedObj).to.equal(null);
+        savedObj = obj;
+        return setTimeout(() => obj.reject(mockTimeoutError), 0);
+      };
       mockRejectAfterTimeoutCreator = stub().returns(mockRejectAfterTimeout);
       mocks[
         '../../../lib/reject-after-timeout'

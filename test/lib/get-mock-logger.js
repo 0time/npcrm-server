@@ -29,7 +29,7 @@ module.exports = () => {
         ),
       };
 
-      args.push(_.clone(orderedArg.message));
+      args.push(_.clone(callArgs));
       orderedArgs.push(orderedArg);
     };
 

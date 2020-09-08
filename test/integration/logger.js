@@ -42,7 +42,7 @@ d(me, () => {
         expect(context.logger.fatal.args.length).to.equal(1),
         expect(context.logger.fatal.args).to.have.deep.nested.property(
           '0.0',
-          mockError.stack.split('\n'),
+          mockError,
         ),
       ]));
   });

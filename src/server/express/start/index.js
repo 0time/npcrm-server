@@ -1,4 +1,5 @@
 const express = require('express');
+const finalizeAfterListen = require('./finalize-after-listen');
 const { get, set } = require('@0ti.me/tiny-pfp');
 const {
   HTTP_METHODS: { GET },
@@ -10,13 +11,11 @@ const {
     WEB_SERVER_APP,
     WEB_SERVER_BASE_PATH,
     WEB_SERVER_CONNECTIONS,
-    WEB_SERVER_INSTANCE,
     WEB_SERVER_START_TIMEOUT,
   },
 } = require('../../../lib/constants');
 const listen = require('./listen');
 const logErrorMiddleware = require('../../../middlewares/log-error-middleware');
-const onConnectionHandler = require('./instance-on-connection-handler');
 const middlewares = require('../../../middlewares');
 const processParameters = require('../../../middlewares/process-parameters');
 const rejectAfterTimeout = require('../../../lib/reject-after-timeout');
@@ -78,14 +77,7 @@ module.exports = (context) =>
     set(context, WEB_SERVER_APP, app);
     set(context, WEB_SERVER_CONNECTIONS, []);
 
-    return listen(context).then(() => {
-      const instance = get(context, WEB_SERVER_INSTANCE);
-
-      instance.on('connection', onConnectionHandler(context));
-
-      if (resolved === false) {
-        resolved = true;
-        resolve(context);
-      }
-    });
+    return listen(context).then(() =>
+      finalizeAfterListen(context, { resolve, resolved }),
+    );
   });

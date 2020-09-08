@@ -7,6 +7,7 @@ module.exports = {
   JSON_SELECTORS: {
     ALLOW_DELETE_MULTIPLE: 'allowDeleteMultiple',
     ASSUME_ID_FIELD_MEANS_UPDATE: 'assumeIdFieldMeansUpdate',
+    CORS_CONFIG: 'config.cors',
     ENABLE_DB_VERSIONING: 'config.enableDbVersioning',
     FIELDS: 'fields',
     GET_SEL: 'get',

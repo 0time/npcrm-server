@@ -11,5 +11,5 @@ module.exports = (context) => (req, res, next) => {
 
   set(req, OPTIONS_ON_REQUEST, options);
 
-  next();
+  return next();
 };

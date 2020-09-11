@@ -4,7 +4,7 @@ const { NODE_ENV } = process.env;
 let nycOverrides = {};
 
 if (NODE_ENV === 'unit') {
-  nycOverrides = nycConfig.setAllCategoriesTo(54);
+  nycOverrides = nycConfig.setAllCategoriesTo(70);
 }
 
 module.exports = Object.assign({}, nycConfig, nycOverrides);

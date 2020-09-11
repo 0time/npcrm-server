@@ -35,17 +35,42 @@ d(me, () => {
   });
 
   describe(GET, () => {
-    beforeEach(() => {
-      get(context, POOL).bindQueryAndResponse(
-        'SELECT * FROM "Member" LIMIT \'10\'',
-        {
-          rows: data,
-        },
-      );
+    describe('given a list of fields is not provided', () => {
+      beforeEach(() => {
+        get(context, POOL).bindQueryAndResponse(
+          'SELECT * FROM "Member" LIMIT \'10\'',
+          {
+            rows: data,
+          },
+        );
+      });
+
+      it('should respond with OK and the result of the query', () =>
+        supertest.get('/api/member').expect(OK, { data }));
     });
 
-    it('should respond with OK and the result of the query', () =>
-      supertest.get('/api/member').expect(OK, { data }));
+    describe('given a list of fields is provided', () => {
+      let field1 = null;
+      let field2 = null;
+
+      beforeEach(() => {
+        field1 = `field-1-${uuid()}`;
+        field2 = `field-2-${uuid()}`;
+
+        get(context, POOL).bindQueryAndResponse(
+          `SELECT "${field1}" , "${field2}" FROM "Member" LIMIT '10'`,
+          {
+            rows: data,
+          },
+        );
+      });
+
+      it('should only select relevant fields', () =>
+        supertest
+          .get('/api/member')
+          .send({ fields: [field1, field2] })
+          .expect(OK, { data }));
+    });
   });
 
   describe(DELETE, () => {

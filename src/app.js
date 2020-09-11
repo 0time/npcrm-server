@@ -4,7 +4,7 @@ const db = require('../db');
 const { get, set } = require('@0ti.me/tiny-pfp');
 const initializeLogger = require('./lib/initialize-logger');
 const {
-  JSON_SELECTORS: { ENABLE_DB_VERSIONING, POSTGRES_DB_VERSIONING, TEST_LOGGER },
+  JSON_SELECTORS: { ENABLE_DB_VERSIONING, POSTGRES_DB_VERSIONING },
 } = require('./lib/constants');
 const merge = require('lodash.merge');
 const postgresDbVersioning = require('@0ti.me/postgres-db-versioning');
@@ -15,18 +15,18 @@ const {
   env: { NODE_ENV },
 } = process;
 
-module.exports = (context) => {
-  let tempContext = merge({}, CONTEXT_DEFAULTS, { config, routes }, context);
-
-  initializeLogger(tempContext);
-
-  Object.assign(context, merge(tempContext, context));
-
-  const shouldTestLogger = get(context, TEST_LOGGER, false) === true;
-
-  return Promise.resolve()
+module.exports = (context) =>
+  Promise.resolve()
+    .then(() =>
+      Object.assign(
+        context,
+        merge({}, CONTEXT_DEFAULTS, { config, routes }, context),
+      ),
+    )
+    .then(initializeLogger)
     .then(() => context.logger.info(`Starting up in ${NODE_ENV}`))
-    .then(() => (shouldTestLogger ? testLogger(context) : null))
+    /* This is a silly call just to make a noisy logger (if configured) so we can validate coloring and formatting */
+    .then(() => testLogger(context))
     .then(() => context.dbConnPool.start(context))
     .catch((err) => context.logger.fatal(err))
     .then(() => context.webServer.start(context))
@@ -44,4 +44,3 @@ module.exports = (context) => {
 
       return context;
     });
-};

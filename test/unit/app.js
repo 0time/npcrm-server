@@ -1,4 +1,9 @@
 const {
+  JSON_SELECTORS: { ENABLE_DB_VERSIONING },
+} = require('../../src/lib/constants');
+const { set } = require('@0ti.me/tiny-pfp');
+
+const {
   d,
   expect,
   sinon: { stub },
@@ -15,6 +20,7 @@ d(me, () => {
   let dbStartSymbol = null;
   let dbStop = null;
   let dbStopSymbol = null;
+  let mockError = null;
   let mockLogger = null;
   let mockPostgresDbVersioning = null;
   let mocks = null;
@@ -46,6 +52,10 @@ d(me, () => {
       },
     };
 
+    set(context, ENABLE_DB_VERSIONING, true);
+
+    mockError = new Error(`mock-error-${uuid()}`);
+
     mocks = {};
 
     mockLogger = require('../lib/get-mock-logger')();
@@ -57,9 +67,66 @@ d(me, () => {
 
     mocks['@0ti.me/postgres-db-versioning'] = mockPostgresDbVersioning;
 
-    app = pquire(me, mocks);
+    app = () => pquire(me, mocks)(context);
   });
 
   it('should try to start the webServer and resolve the context', () =>
-    expect(app(context)).to.eventually.deep.equal(context));
+    expect(app()).to.eventually.deep.equal(context));
+
+  describe('given the postgresDbVersioning is disabled', () => {
+    beforeEach(() => {
+      set(context, ENABLE_DB_VERSIONING, false);
+    });
+
+    it('should just return the context and not try to run that process', () =>
+      expect(app())
+        .to.eventually.deep.equal(context)
+        .then(() => expect(mockPostgresDbVersioning).to.not.have.been.called));
+  });
+
+  describe('given the db rejects with an error', () => {
+    beforeEach(() => {
+      mockError = new Error(`mock-error-${uuid()}`);
+      dbStart = stub().rejects(mockError);
+      set(context, 'dbConnPool.start', dbStart);
+    });
+
+    it('should catch and log the error', () =>
+      expect(app()).to.eventually.be.fulfilled.then(() =>
+        expect(context.logger.fatal.args).to.have.nested.property(
+          '0.0',
+          mockError,
+        ),
+      ));
+  });
+
+  describe('given the webServer rejects with an error', () => {
+    beforeEach(() => {
+      mockError = new Error(`mock-error-${uuid()}`);
+      webStart = stub().rejects(mockError);
+      set(context, 'webServer.start', webStart);
+    });
+
+    it('should catch and log the error', () =>
+      expect(app()).to.eventually.be.fulfilled.then(() =>
+        expect(context.logger.fatal.args).to.have.nested.property(
+          '0.0',
+          mockError,
+        ),
+      ));
+  });
+
+  describe('given the postgresDbVersioning rejects with an error', () => {
+    beforeEach(() => {
+      mocks['@0ti.me/postgres-db-versioning'] = stub().rejects(mockError);
+    });
+
+    it('should catch and log the error', () =>
+      expect(app()).to.eventually.be.fulfilled.then(() =>
+        expect(context.logger.fatal.args).to.have.nested.property(
+          '0.0',
+          mockError,
+        ),
+      ));
+  });
 });

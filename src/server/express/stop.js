@@ -29,7 +29,7 @@ module.exports = (context) => {
       if (!resolved) {
         resolved = true;
 
-        context.process.exit(-1);
+        context.process.exit(127);
 
         reject(
           new Error(

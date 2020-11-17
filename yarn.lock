@@ -56,10 +56,15 @@
     sinon-chai "^3.5.0"
     uuid "^3.3.3"
 
-"@0ti.me/tiny-pfp@0.1.13", "@0ti.me/tiny-pfp@^0.1.13":
+"@0ti.me/tiny-pfp@0.1.13":
   version "0.1.13"
   resolved "https://registry.yarnpkg.com/@0ti.me/tiny-pfp/-/tiny-pfp-0.1.13.tgz#02ccb010671e7cd6f02844a1ee77653d8c35b8b1"
   integrity sha512-7WmOOJ8QS0sNud7isSt3kpuS9e6zUTwQRmzaqf51Zyl0jhHlP4Q7MR524L0DRAgqdQDspLOAf/NxN6hKu6Ye6g==
+
+"@0ti.me/tiny-pfp@0.1.14":
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/@0ti.me/tiny-pfp/-/tiny-pfp-0.1.14.tgz#15778121a1f6a856f3aa36f14af1bf47d6627bbb"
+  integrity sha512-+VVUu2qf8o0Ifu1lDNZvyOMSid1lNHe3CPR8nVxp48bpxfn2Bwq3k0+Gkzkd2bLq3F6H7eSlkcXxqmeeWRplxg==
 
 "@0ti.me/tiny-pfp@^0.1.10":
   version "0.1.10"

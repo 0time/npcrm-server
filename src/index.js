@@ -1,3 +1,5 @@
 const app = require('./app');
 
-module.exports = app();
+const context = {};
+
+module.exports = app(context);

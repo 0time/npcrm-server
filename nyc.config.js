@@ -1,17 +1,13 @@
 const nycConfig = require('@0ti.me/test-deps/configuration-templates/nyc.config');
 const { NODE_ENV } = process.env;
 
-let requiredPercent = 25;
+let nycOverrides = {};
 
 if (NODE_ENV === 'unit') {
-  requiredPercent = 0;
+  nycOverrides = nycConfig.setAllCategoriesTo(70);
 }
 
-module.exports = Object.assign(
-  {},
-  nycConfig,
-  nycConfig.setAllCategoriesTo(requiredPercent),
-);
+module.exports = Object.assign({}, nycConfig, nycOverrides);
 
 // This just prints everything if you execute this directly like so:
 //   node nyc.config.js

@@ -1,8 +1,10 @@
 const express = require('../server/express');
+const postgres = require('../db/postgres');
 
 module.exports = {
-  logger: console,
+  dbConnPool: postgres,
   process,
   Promise,
-  server: express,
+  setTimeout,
+  webServer: express,
 };

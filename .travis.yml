@@ -9,5 +9,3 @@ jobs:
     node_js: 12
     stage: expect_version_bump
     script: yarn check-for-version-bump
-  - node_js: 12
-    if: branch = master

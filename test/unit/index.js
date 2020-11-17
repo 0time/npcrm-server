@@ -1,6 +1,4 @@
-const proxyquire = require('proxyquire')
-  .noPreserveCache()
-  .noCallThru();
+const proxyquire = require('proxyquire').noPreserveCache().noCallThru();
 
 const {
   d,
@@ -31,7 +29,7 @@ d(me, () => {
   it('should call app with no args', () => {
     index();
 
-    expect(mockApp).to.have.been.calledOnceWithExactly();
+    expect(mockApp).to.have.been.calledOnceWithExactly({});
   });
 
   it('should return the result of app', () =>

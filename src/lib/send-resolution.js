@@ -3,7 +3,7 @@ const { INTERNAL_SERVER_ERROR, OK } = require('http-status-codes');
 const parseResponse = require('./parse-response');
 
 // The function should promise an object with a response (response for text or jsonRespone for json)
-// and an optional status code (200 OK is assumed if absent)
+// and an optional status code (OK is assumed if absent)
 module.exports = (context, fnMayPromise, singleArgumentCall = true) => (
   req,
   res,
@@ -15,15 +15,16 @@ module.exports = (context, fnMayPromise, singleArgumentCall = true) => (
         ? fnMayPromise({ context, next, req, res })
         : fnMayPromise(req, res, next, context),
     )
-    .then((result) =>
-      res.status(get(result, 'status', OK)).send(parseResponse(result)),
-    )
+    .then((result) => {
+      const response = parseResponse(result);
+
+      context.logger.trace({ response, result });
+
+      return res.status(get(result, 'status', OK)).send(response);
+    })
     .then(() => next())
     .catch((error) => {
-      context.logger.error({
-        message: `This was an unhandled route implementation error detected in ${__filename}`,
-        error,
-      });
+      context.logger.error(error);
 
       res
         .status(INTERNAL_SERVER_ERROR)

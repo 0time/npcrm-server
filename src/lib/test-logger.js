@@ -11,9 +11,13 @@ module.exports = (context) => {
 
     if (shouldTestLogger) {
       Object.keys(loggingLevels).forEach((level) => {
-        context.logger[level]('testing log level with a string');
-        context.logger[level](new Error('testing log level with an error'));
-        context.logger[level]({ msg: 'testing log level with an object' });
+        context.logger[level](`testing log level ${level} with a string`);
+        context.logger[level](
+          new Error(`testing log level ${level} with an error`),
+        );
+        context.logger[level]({
+          msg: `testing log level ${level} with an object`,
+        });
       });
     }
   } catch (err) {

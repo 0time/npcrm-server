@@ -13,6 +13,10 @@ const me = __filename;
 d(me, () => {
   let config = null;
   let createFormat = null;
+  let definedCustomFormatterKey = null;
+  let definedCustomFormatter = null;
+  let definedCustomFormatterResult = null;
+  let definedCustomFormatterResultResult = null;
   let key = null;
   let mockFormat = null;
   let mockFormatResult = null;
@@ -21,6 +25,7 @@ d(me, () => {
   let mockFormatKeyResult = null;
   let mocks = null;
   let options = null;
+  let undefinedCustomFormatterKey = null;
 
   beforeEach(() => {
     mocks = {};
@@ -36,6 +41,18 @@ d(me, () => {
     mockFormat = stub().returns(mockFormatResult);
     set(mockFormat, key, mockFormatKey);
     mocks['winston'] = { format: mockFormat };
+
+    definedCustomFormatterKey = `defined-custom-formatter-key-${uuid()}`;
+    undefinedCustomFormatterKey = `undefined-custom-formatter-key-${uuid()}`;
+    definedCustomFormatterResultResult = `defined-custom-formatter-result-result-${uuid()}`;
+    definedCustomFormatterResult = stub().returns(
+      definedCustomFormatterResultResult,
+    );
+    definedCustomFormatter = stub().returns(definedCustomFormatterResult);
+
+    mocks['./custom-formatters'] = {
+      [definedCustomFormatterKey]: definedCustomFormatter,
+    };
 
     set(config, 'key', key);
     set(config, 'options', options);
@@ -98,4 +115,25 @@ d(me, () => {
 
   it('should return the result of winston.format.${key}', () =>
     expect(createFormat()).to.equal(mockFormatKeyResult));
+
+  describe('given a custom formatter', () => {
+    beforeEach(() => {
+      set(config, 'key', definedCustomFormatterKey);
+    });
+
+    it('should use the custom formatter', () => {
+      createFormat();
+      expect(mockFormat).to.have.been.calledOnceWithExactly(
+        definedCustomFormatter,
+      );
+    });
+  });
+
+  describe('given a custom formatter that does not exist', () => {
+    beforeEach(() => {
+      set(config, 'key', undefinedCustomFormatterKey);
+    });
+
+    it('should throw', () => expect(createFormat).to.throw());
+  });
 });

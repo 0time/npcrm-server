@@ -42,6 +42,9 @@ d(me, () => {
     dbStop = stub().resolves(dbStopSymbol);
 
     context = {
+      config: {
+        testLogger: false,
+      },
       dbConnPool: {
         start: dbStart,
         stop: dbStop,

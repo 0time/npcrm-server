@@ -1,5 +1,4 @@
 const levels = require('./lib/logging-levels');
-const util = require('util');
 
 module.exports = {
   // express-style cors config https://npmjs.org/package/cors
@@ -21,15 +20,7 @@ module.exports = {
   logger: {
     winstonFormats: [
       {
-        fn: (info) => {
-          if (info instanceof Error) {
-            info.message = info.stack;
-          } else if (typeof info.message === 'object') {
-            info.message = util.inspect(info.message, { depth: 5 });
-          }
-
-          return info;
-        },
+        key: 'custom-stringify',
       },
       { key: 'timestamp' },
       {
@@ -37,7 +28,6 @@ module.exports = {
         options: (info) => `${info.timestamp} ${info.level}: ${info.message}`,
       },
       { key: 'colorize', options: { all: true } },
-      //{ key: 'cli', options: { all: true } },
     ],
     winstonTransportConfigs: [
       {

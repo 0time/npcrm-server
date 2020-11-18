@@ -24,6 +24,14 @@ module.exports = (context) =>
       ),
     )
     .then(initializeLogger)
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      // eslint-disable-next-line no-console
+      console.error('early error detected above, exiting hard');
+
+      process.exit(0);
+    })
     .then(() => context.logger.info(`Starting up in ${NODE_ENV}`))
     /* This is a silly call just to make a noisy logger (if configured) so we can validate coloring and formatting */
     .then(() => testLogger(context))
